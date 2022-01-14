@@ -190,5 +190,28 @@ class Asterisk{
 		header('Content-Type: application/json');
 		echo json_encode($mainarr);
 	}
+
+	public function kill_channel(){
+		$channel = $_GET["channel"];
+		exec("/usr/sbin/asterisk -rx \"channel request hangup ".$channel."\"", $data);
+		//print_r($data);
+		$headers_arr = $this->_get_header($data[0], "words");
+		$char_lens = $this->_get_header($data[0], "char_lens");
+		unset($data[0]);
+		$mainarr = array();
+		$myarr = array();
+		foreach ($data as $key => $value) {
+			if (strlen($value) > 100) {
+				$myarr = $this->_get_parts($headers_arr, $value, $char_lens);
+				$mainarr[] = $myarr;
+			}
+			else{
+				$mainarr[] = $value;	
+			}
+			$myarr = array();
+		}
+		header('Content-Type: application/json');
+		echo json_encode($mainarr);
+	}
 }
 ?>

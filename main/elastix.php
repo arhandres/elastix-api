@@ -54,6 +54,26 @@ class Elastix{
 
 		return $where;
 	}
+	public function get_cdr_total(){
+		try {
+			$this->_get_db_connection("asteriskcdrdb");
+		 	$start_date             = $_POST["start_date"];
+			$end_date               = $_POST["end_date"];
+			$field_name             = $_POST["field_name"];
+			$field_pattern          = $_POST["field_pattern"];
+			$status                 = $_POST["status"];
+			$custom                 = $_POST["custom"];
+			$where_expression		= $this->_cdr_where_expression($start_date, $end_date, $field_name, $field_pattern, $status, $custom);
+			$sql_cmd        = "SELECT COUNT(*) FROM cdr WHERE $where_expression";
+			$stmt           = $this->db->prepare($sql_cmd);
+			$stmt->execute();
+			$num_rows = $stmt->fetchColumn();
+		 	header('Content-Type: application/json');
+		 	echo json_encode($num_rows);
+		} catch (Exception $e) {
+			echo $e->getMessage();
+		}
+	}
 	public function get_cdr(){
 		/*
 			+---------------+
@@ -92,9 +112,10 @@ class Elastix{
 			$field_pattern          = $_POST["field_pattern"];
 			$status                 = $_POST["status"];
 			$limit                  = isset($_POST["limit"])? $_POST["limit"] : 100;
+			$offset                  = isset($_POST["offset"])? $_POST["offset"] : 0;
 			$custom                 = $_POST["custom"];
 			$where_expression		= $this->_cdr_where_expression($start_date, $end_date, $field_name, $field_pattern, $status, $custom);
-			$sql_cmd        = "SELECT * FROM cdr WHERE $where_expression ORDER BY calldate DESC LIMIT $limit";
+			$sql_cmd        = "SELECT * FROM cdr WHERE $where_expression ORDER BY calldate DESC LIMIT $limit OFFSET $offset";
 			$stmt           = $this->db->prepare($sql_cmd);
 			$stmt->execute();
 		 	$result = (array)$stmt->fetchAll(PDO::FETCH_ASSOC);

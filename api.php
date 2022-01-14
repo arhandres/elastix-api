@@ -6,7 +6,7 @@ class APICommand
 {
 	public function __construct($rkey, $cmd)
 	{
-		$this->key = 'YOUR_SECRETKEY_50_RANDOM_CHARS';
+		$this->key = 'zdpJMFzbDIsUudKzH4t6lssqe29Jshw1iOtmWBZbATl41V0rcy';
 		$this->rkey = $rkey;
 		$this->cmd = $cmd;
 	}
@@ -29,6 +29,10 @@ class APICommand
 					$ast = new Asterisk();
 					$ast->get_active_call();
 					break;
+				case "killcall":
+					$ast = new Asterisk();
+					$ast->kill_channel();
+					break;
 				case "systemresources":
 					$ast = new Asterisk();
 					$ast->get_system_resources();
@@ -44,6 +48,10 @@ class APICommand
 				case "cdrreport":
 					$ela = new Elastix();
 					$ela->get_cdr();
+					break;
+				case "cdrreportcount":
+					$ela = new Elastix();
+					$ela->get_cdr_total();
 					break;
 				case "getwavfile":
 					$ela = new Elastix();
