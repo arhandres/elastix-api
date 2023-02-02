@@ -49,6 +49,10 @@ class APICommand
 					$ela = new Elastix();
 					$ela->get_cdr();
 					break;
+				case "cdrdelete":
+					$ela = new Elastix();
+					$ela->delete_cdr();
+					break;
 				case "cdrreportcount":
 					$ela = new Elastix();
 					$ela->get_cdr_total();

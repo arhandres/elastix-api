@@ -17,7 +17,7 @@ class Elastix{
 		fclose($fh);
 		$this->hostname = "localhost";
 		$this->username = "root";
-		$this->password = $data["mysqlrootpwd"];
+		$this->password = "123456";//$data["mysqlrootpwd"];
 		$this->db = null;
 	}
 	public function __destruct(){
@@ -121,6 +121,27 @@ class Elastix{
 		 	$result = (array)$stmt->fetchAll(PDO::FETCH_ASSOC);
 		 	header('Content-Type: application/json');
 		 	echo json_encode($result);
+		} catch (Exception $e) {
+			echo $e->getMessage();
+		}
+	}
+	public function delete_cdr(){
+		try {
+			$unique         = $_POST["unique"];
+			$recordName       = $_POST["filename"];
+
+			$directory = "/var/spool/asterisk/monitor/";
+            $file = realpath($directory . $recordName);
+
+			unlink($file);
+
+			$this->_get_db_connection("asteriskcdrdb");		 	
+			
+			$sql_cmd        = "UPDATE cdr SET recordingfile = 'deleted' WHERE uniqueid = '$unique'";
+			$this->db->exec($sql_cmd);
+		 	
+		 	header('Content-Type: application/json');
+			echo '{"status": "DELETED OK", "code": 200}';
 		} catch (Exception $e) {
 			echo $e->getMessage();
 		}
